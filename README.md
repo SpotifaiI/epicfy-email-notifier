@@ -1,1 +1,1 @@
-# epicfy-notification-service
+# epicfy-email-notifier
