@@ -1,3 +1,4 @@
+using Epicty.EmailNotifier;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
@@ -15,12 +16,17 @@ app.Run();
 
 #region [endpoints handlers]
 
-static Task<IResult> HandleSendEmailNotification(SendEmailRequestDto sendEmailRequestDto)
+static IResult HandleSendEmailNotification(SendEmailDto sendEmailDto)
 {
-    return null!;
-}
+    var emailNotification = new EmailNotification()
+        .WithUserName(sendEmailDto.CreatedBy)
+        .WithIdeaTitle(sendEmailDto.Idea.Title)
+        .WithIdeaDescription(sendEmailDto.Idea.Description)
+        .WithCreatedAt(sendEmailDto.Idea.CreatedAt)
+        .WithTargetEmail(sendEmailDto.TargetEmail.ToString());
 
-record SendEmailRequestDto(string TargetEmail, Idea Idea);
-record Idea(string Title, string Description, DateTime CreatedAt);
+    emailNotification.Send();
+    return Results.Ok();
+}
 
 #endregion
