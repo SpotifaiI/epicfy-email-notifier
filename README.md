@@ -17,7 +17,7 @@ POST /api/notifications/idea
 Content-Type: application/json
 
 {
-    "createdBy": LuanGamepLAYS
+    "createdBy": "LuanGamepLAYS"
     "idea": {
         "title": "Nova Feature",
         "description": "Adicionar botão de compartilhamento nas redes sociais.",
