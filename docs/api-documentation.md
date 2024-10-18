@@ -28,4 +28,4 @@ Content-Type: application/json
 ```
 
 **Response**
-- 201 Created
+- 200 Created
