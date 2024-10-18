@@ -17,13 +17,13 @@ POST /api/notifications/idea
 Content-Type: application/json
 
 {
+    "targetEmail": "exemplo@dominio.com",
     "createdBy": "LuanGamepLAYS"
     "idea": {
         "title": "Nova Feature",
         "description": "Adicionar botão de compartilhamento nas redes sociais.",
         "createdAt": "2024-10-14T12:30:00Z"
     }
-    "targetEmail": "exemplo@dominio.com",
 }
 ```
 
