@@ -1,4 +1,4 @@
-# Epicfy - Email Nofifier
+# Epicfy - Email Notifier
 
 Esta API é um serviço para por enviar notificações por e-mail sempre que uma nova ideia é registrada. 
 Abaixo está a documentação completa dos endpoints, estrutura de requests e responses:
