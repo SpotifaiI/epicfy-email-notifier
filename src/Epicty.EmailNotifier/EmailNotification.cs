@@ -66,7 +66,7 @@ Atenciosamente,
 
         var client = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
         {
-            Credentials = new NetworkCredential("5919d424bd5f5f", "47b99aa353d223"),
+            Credentials = new NetworkCredential("5919d424bd5f5f", "******3d223"),
             EnableSsl = true
         };
 
