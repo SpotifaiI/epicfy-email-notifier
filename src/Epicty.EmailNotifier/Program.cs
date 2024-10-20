@@ -2,6 +2,7 @@ using Epicty.EmailNotifier;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddCors();
 
 var app = builder.Build();
 
