@@ -1,0 +1,12 @@
+POST http://localhost:5000/api//v1/notifications HTTP/1.1
+Content-Type: application/json
+
+{
+  "createdBy": "PedrinnhoGemePLAYs",
+  "idea": {
+    "title": "Melhorar Segurança no Login",
+    "description": "Implementar autenticação em dois fatores (2FA) para todos os usuários e aumentar a segurança das contas.",
+    "createdAt": "2024-10-20T17:15:47.749Z"
+  },
+  "targetEmail": "exemplo@exemplo.com"
+}
