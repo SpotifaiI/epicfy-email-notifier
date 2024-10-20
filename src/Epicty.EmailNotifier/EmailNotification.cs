@@ -1,9 +1,10 @@
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Mail;
 
 namespace Epicty.EmailNotifier;
 
-record SendEmailDto(string CreatedBy, Idea Idea, MailAddress TargetEmail);
+record SendEmailDto(string CreatedBy, Idea Idea, [EmailAddress] string TargetEmail);
 record Idea(string Title, string Description, DateTime CreatedAt);
 
 public class EmailNotification
@@ -47,37 +48,56 @@ public class EmailNotification
     public void Send()
     {
         Validate();
-        string subject = $"Nova Idea Registrada no Epicfy: {_targetEmail}";
+
+        string subject = $"Nova Ideia Registrada no Epicfy: {_ideaTitle}";
         string body = $@"
-Olá,
+        <html>
+        <body>
+            <p>Olá,</p>
+            <p>Uma nova ideia foi registrada no sistema! Confira os detalhes abaixo:</p>
+            <ul>
+                <li><strong>Título:</strong> {_ideaTitle}</li>
+                <li><strong>Descrição:</strong> {_ideaDescription}</li>
+                <li><strong>Data de Criação:</strong> {_createdAt:dd/MM/yyyy HH:mm:ss}</li>
+                <li><strong>Autor:</strong> {_createdBy}</li>
+            </ul>
+            <p>Por favor, revise essa ideia e avalie as ações necessárias.</p>
+            <br>
+            <p>Atenciosamente,<br><strong>Spotfail & Epicfy Ltda.</strong><br></p>
+        </body>
+        </html>";
 
-Uma nova ideia foi registrada no sistema. Aqui estão os detalhes:
-
-**Título da Ideia:** {_ideaTitle}  
-**Descrição:** {_ideaDescription}  
-**Data de Criação:** {_createdAt:dd/MM/yyyy HH:mm:ss}
-**Criada por:** {_createdBy}
-
-Por favor, revise a ideia e considere as próximas ações que podem ser tomadas.
-
-Atenciosamente,  
-[Seu Nome ou Nome da Sua Empresa]
-";
-
-        var client = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
+        var mensagem = new MailMessage
         {
-            Credentials = new NetworkCredential("5919d424bd5f5f", "******3d223"),
+            From = new MailAddress("hello@demomailtrap.com", "Spotfail & Epicfy Ltda."),
+            Subject = subject,
+            Body = body,
+            IsBodyHtml = true
+        };
+
+        mensagem.To.Add(_targetEmail!);
+
+        var client = new SmtpClient("live.smtp.mailtrap.io", 2525)
+        {
+            Credentials = new NetworkCredential("api", "2845723498**"),
             EnableSsl = true
         };
 
-        client.Send("2a202b6687-0c6cbd@inbox.mailtrap.io", _targetEmail!, subject, body);
+        try
+        {
+            client.Send(mensagem);
+        }
+        catch (Exception ex)
+        {
+            throw new SmtpException($"Erro ao enviar e-mail: {ex.Message}");
+        }
     }
 
     private void Validate()
     {
         var validationErrors = new List<string>();
 
-        if (MailAddress.TryCreate(_targetEmail, out _)) validationErrors.Add("Valid TargetEmail is required");
+        if (!MailAddress.TryCreate(_targetEmail, out _)) validationErrors.Add("Valid TargetEmail is required");
         if (string.IsNullOrWhiteSpace(_ideaTitle)) validationErrors.Add("Idea Title is required.");
         if (string.IsNullOrWhiteSpace(_ideaDescription)) validationErrors.Add("Idea Description is required.");
         if (string.IsNullOrWhiteSpace(_createdBy)) validationErrors.Add("UserName is required.");
