@@ -1,10 +1,13 @@
 using Epicty.EmailNotifier;
 
+using Microsoft.Extensions.Options;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCors();
 builder.Services.AddSwaggerGen();
 builder.Services.AddLogging();
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
 var app = builder.Build();
 
@@ -30,7 +33,7 @@ app.Run();
 
 #region [methods]
 
-static IResult HandleSendEmailNotification(SendEmailDto sendEmailDto, ILogger<Program> logger)
+static IResult HandleSendEmailNotification(SendEmailDto sendEmailDto, ILogger<Program> logger, IOptions<SmtpSettings> smtpSettings)
 {
     try
     {
@@ -41,8 +44,8 @@ static IResult HandleSendEmailNotification(SendEmailDto sendEmailDto, ILogger<Pr
             .WithIdeaDescription(sendEmailDto.Idea.Description)
             .WithCreatedAt(sendEmailDto.Idea.CreatedAt);
 
+        emailNotification.Send(smtpSettings.Value);
         logger.LogInformation($"Notificação enviada com sucesso para: {sendEmailDto.TargetEmail}");
-        emailNotification.Send();
 
         return Results.Ok();
     }

@@ -2,12 +2,24 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Mail;
 
+using Microsoft.Extensions.Options;
+
 namespace Epicty.EmailNotifier;
 
 record SendEmailDto(string CreatedBy, Idea Idea, [EmailAddress] string TargetEmail);
 record Idea(string Title, string Description, DateTime CreatedAt);
+public class SmtpSettings
+{
+    public required string Host { get; set; }
+    public required int Port { get; set; }
+    public required bool EnableSsl { get; set; }
+    public required string Username { get; set; }
+    public required string Password { get; set; }
+    public required string FromEmail { get; set; }
+    public required string DisplayName { get; set; }
+}
 
-public class EmailNotification
+public class EmailNotification()
 {
     private string? _targetEmail;
     private string? _ideaTitle;
@@ -45,10 +57,9 @@ public class EmailNotification
         return this;
     }
 
-    public void Send()
+    public void Send(SmtpSettings smtpSettings)
     {
         Validate();
-
         string subject = $"Nova Ideia Registrada no Epicfy: {_ideaTitle}";
         string body = $@"
         <html>
@@ -69,18 +80,17 @@ public class EmailNotification
 
         var mensagem = new MailMessage
         {
-            From = new MailAddress("hello@demomailtrap.com", "Spotfail & Epicfy Ltda."),
+            From = new MailAddress(smtpSettings.FromEmail, smtpSettings.DisplayName),
             Subject = subject,
             Body = body,
             IsBodyHtml = true
         };
 
         mensagem.To.Add(_targetEmail!);
-
-        var client = new SmtpClient("live.smtp.mailtrap.io", 2525)
+        var client = new SmtpClient(smtpSettings.Host, smtpSettings.Port)
         {
-            Credentials = new NetworkCredential("api", "2845723498**"),
-            EnableSsl = true
+            Credentials = new NetworkCredential(smtpSettings.Username, smtpSettings.Password),
+            EnableSsl = smtpSettings.EnableSsl,
         };
 
         try
