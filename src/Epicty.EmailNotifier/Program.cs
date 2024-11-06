@@ -1,11 +1,5 @@
-using System.Text;
-using System.Text.Json;
-
-using Epicty.EmailNotifier;
 using Epicty.EmailNotifier.Endpoints;
 using Epicty.EmailNotifier.Models;
-
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
@@ -16,7 +10,6 @@ builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpS
 
 var app = builder.Build();
 
-app.AddEpicfyEndpoints();
 app.UseHttpsRedirection();
 app.UseCors(options => options
     .AllowAnyOrigin()
@@ -24,6 +17,7 @@ app.UseCors(options => options
     .AllowAnyHeader()
 );
 app.UseSwagger();
+app.AddEpicfyEndpoints();
 app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "Epicfy Email Notifier"));
 app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
 // app.Use(async (context, next) =>

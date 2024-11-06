@@ -11,14 +11,11 @@ internal static class EpicfyEndpoints
 {
     internal static IEndpointRouteBuilder AddEpicfyEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var enpicfyEndpoints = endpoints.MapGroup("api/v1/notifications/").WithTags("Send Email Endpoints!")
-        .WithOpenApi(x =>
-        {
-            x.Summary = "Send notification of new registered idea!";
-            return x;
-        });
+        var epicfyEndpoints = endpoints.MapGroup("api/v1/notifications/").WithTags("Send Email Endpoints!");
 
-        return enpicfyEndpoints;
+        epicfyEndpoints.MapPost("new-idea", HandleSendEmailNotification);
+
+        return epicfyEndpoints;
     }
 
     #region [Handlers]
@@ -27,7 +24,7 @@ internal static class EpicfyEndpoints
         try
         {
             var emailNotification = new EmailNotification()
-                .WithTargetEmail(sendEmailDto.TargetEmail.ToString())
+                .WithTargetEmail(sendEmailDto.TargetEmail)
                 .WithUserName(sendEmailDto.CreatedBy)
                 .WithIdeaTitle(sendEmailDto.Idea.Title)
                 .WithIdeaDescription(sendEmailDto.Idea.Description)
@@ -44,6 +41,7 @@ internal static class EpicfyEndpoints
             return Results.BadRequest($"Erro ao enviar notificação: {error}");
         }
     }
+    
     #endregion
 
     #region [Private Methods]
