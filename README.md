@@ -11,7 +11,7 @@ Abaixo está a documentação completa dos endpoints, estrutura de requests e re
 Este endpoint é chamado para avisar empresa via email que uma nova idea foi adicionada.
 
 **Request**  
-```http
+```http request
 POST http://localhost:5000/api/v1/email-notifications/new-idea HTTP/1.1
 Content-Type: application/json
 
@@ -33,7 +33,7 @@ Content-Type: application/json
 Este endpoint é chamado para enviar uma confirmação de email com um link para o usuário confirmar o email.
 
 **Request**
-```
+```http request
 POST http://localhost:5000/api/v1/email-notifications/confirm-user HTTP/1.1
 Content-Type: application/json
 
