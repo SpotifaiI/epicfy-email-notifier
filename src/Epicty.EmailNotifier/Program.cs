@@ -1,14 +1,14 @@
 using Epicty.EmailNotifier.Endpoints;
 using Epicty.EmailNotifier.Models;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCors();
 builder.Services.AddSwaggerGen();
 builder.Services.AddLogging();
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
-var app = builder.Build();
+WebApplication? app = builder.Build();
 
 app.UseHttpsRedirection();
 app.UseCors(options => options
