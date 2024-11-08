@@ -20,8 +20,8 @@ public class ValidationEndpointFilter<T> : IEndpointFilter where T : class
             {
                 if (typeof(T) == typeof(NewIdeaRequest))
                 {
-                    var notification = new NewIdeaEmailNotification();
-                    var errors = notification.Validate((NewIdeaRequest)(object)request);
+                    NewIdeaEmailNotification notification = new();
+                    List<string> errors = notification.Validate((NewIdeaRequest)(object)request);
                     if (errors.Count > 0)
                     {
                         validationErrors.AddRange(errors);
@@ -29,8 +29,8 @@ public class ValidationEndpointFilter<T> : IEndpointFilter where T : class
                 }
                 else if (typeof(T) == typeof(EmailConfirmationRequest))
                 {
-                    var notification = new EmailConfirmationNotification();
-                    var errors = notification.Validate((EmailConfirmationRequest)(object)request);
+                    EmailConfirmationNotification notification = new();
+                    List<string> errors = notification.Validate((EmailConfirmationRequest)(object)request);
                     if (errors.Count > 0)
                     {
                         validationErrors.AddRange(errors);
@@ -47,10 +47,13 @@ public class ValidationEndpointFilter<T> : IEndpointFilter where T : class
             validationErrors.Add($"Error processing request: {ex.Message}");
         }
 
-        if (validationErrors.Count <= 0) return await next(context);
+        if (validationErrors.Count <= 0)
+        {
+            return await next(context);
+        }
 
         context.HttpContext.Response.StatusCode = 400;
         context.HttpContext.Response.ContentType = "application/json";
-        return Results.BadRequest(new ErrorResponse(400,  validationErrors));
+        return Results.BadRequest(new ErrorResponse(400, validationErrors));
     }
 }

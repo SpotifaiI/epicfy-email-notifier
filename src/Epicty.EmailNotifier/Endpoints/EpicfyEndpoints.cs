@@ -3,6 +3,7 @@ using Epicty.EmailNotifier.Filters;
 using Epicty.EmailNotifier.Models;
 using Epicty.EmailNotifier.Models.Requests;
 using Epicty.EmailNotifier.Models.Responses;
+
 using Microsoft.Extensions.Options;
 
 namespace Epicty.EmailNotifier.Endpoints;
@@ -11,7 +12,7 @@ internal static class EpicfyEndpoints
 {
     internal static IEndpointRouteBuilder AddEpicfyEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        RouteGroupBuilder epicfyEndpoints =endpoints.MapGroup("api/v1/email-notifications/")
+        RouteGroupBuilder epicfyEndpoints = endpoints.MapGroup("api/v1/email-notifications/")
             .WithTags("Send Email Endpoints!");
 
         epicfyEndpoints.MapPost("new-idea", HandleSendEmailIdea)
@@ -23,7 +24,7 @@ internal static class EpicfyEndpoints
                 x.Summary = "Endpoint to send an email notification for a new idea!";
                 return x;
             });
-        
+
         epicfyEndpoints.MapPost("confirm-email", HandleSendConfirmationEmail)
             .AddEndpointFilter<ValidationEndpointFilter<EmailConfirmationRequest>>()
             .Produces(500, typeof(ErrorResponse))
@@ -37,9 +38,6 @@ internal static class EpicfyEndpoints
         return epicfyEndpoints;
     }
 
-    #region [Private Methods]
-
-    #endregion
     #region [Handlers]
 
     private static IResult HandleSendConfirmationEmail(EmailConfirmationRequest emailConfirmationRequest,
@@ -51,10 +49,10 @@ internal static class EpicfyEndpoints
                 .WithTargetEmail(emailConfirmationRequest.TargetEmail)
                 .WithConfirmationUrl(emailConfirmationRequest.ConfirmationUrl)
                 .WithUserName(emailConfirmationRequest.UserName);
-            
+
             emailConfirmationNotification.Send(smtpSettings.Value);
             logger.LogInformation($"Notificação enviada com sucesso para: {emailConfirmationRequest.TargetEmail}");
-            
+
             return Results.Ok();
         }
         catch (Exception error)
