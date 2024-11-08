@@ -3,6 +3,8 @@ using System.Text.Json;
 using Epicty.EmailNotifier.EmailNotification;
 using Epicty.EmailNotifier.Models;
 using Epicty.EmailNotifier.Models.Requests;
+using Epicty.EmailNotifier.Models.Responses;
+
 using Microsoft.Extensions.Options;
 
 namespace Epicty.EmailNotifier.Endpoints;
@@ -11,11 +13,26 @@ internal static class EpicfyEndpoints
 {
     internal static IEndpointRouteBuilder AddEpicfyEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        RouteGroupBuilder epicfyEndpoints =
-            endpoints.MapGroup("api/v1/email-notifications/").WithTags("Send Email Endpoints!");
+        RouteGroupBuilder epicfyEndpoints =endpoints.MapGroup("api/v1/email-notifications/")
+            .WithTags("Send Email Endpoints!");
 
-        epicfyEndpoints.MapPost("new-idea", HandleSendEmailIdea);
-        epicfyEndpoints.MapPost("confirm-email", HandleSendConfirmationEmail);
+        epicfyEndpoints.MapPost("new-idea", HandleSendEmailIdea)
+            .Produces(500, typeof(ErrorResponse))
+            .Produces(200)
+            .WithOpenApi(x =>
+            {
+                x.Summary = "Endpoint to send an email notification for a new idea!";
+                return x;
+            });
+        
+        epicfyEndpoints.MapPost("confirm-email", HandleSendConfirmationEmail)
+            .Produces(500, typeof(ErrorResponse))
+            .Produces(200)
+            .WithOpenApi(x =>
+            {
+                x.Summary = "Endpoint to send an email confirmation to user!";
+                return x;
+            });
 
         return epicfyEndpoints;
     }
