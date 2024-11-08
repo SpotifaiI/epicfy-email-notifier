@@ -15,7 +15,7 @@ internal static class EpicfyEndpoints
             endpoints.MapGroup("api/v1/email-notifications/").WithTags("Send Email Endpoints!");
 
         epicfyEndpoints.MapPost("new-idea", HandleSendEmailIdea);
-        epicfyEndpoints.MapPost("confirm-user", HandleSendConfirmationEmail);
+        epicfyEndpoints.MapPost("confirm-email", HandleSendConfirmationEmail);
 
         return epicfyEndpoints;
     }

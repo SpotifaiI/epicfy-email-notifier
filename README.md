@@ -34,7 +34,7 @@ Este endpoint é chamado para enviar uma confirmação de email com um link para
 
 **Request**
 ```http request
-POST http://localhost:5000/api/v1/email-notifications/confirm-user HTTP/1.1
+POST http://localhost:5000/api/v1/email-notifications/confirm-email HTTP/1.1
 Content-Type: application/json
 
 {
