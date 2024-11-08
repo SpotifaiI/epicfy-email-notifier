@@ -1,7 +1,9 @@
 using System.Text;
 using System.Text.Json;
 
+using Epicty.EmailNotifier.EmailNotification;
 using Epicty.EmailNotifier.Models;
+using Epicty.EmailNotifier.Models.Requests;
 
 using Microsoft.Extensions.Options;
 
@@ -11,27 +13,34 @@ internal static class EpicfyEndpoints
 {
     internal static IEndpointRouteBuilder AddEpicfyEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var epicfyEndpoints = endpoints.MapGroup("api/v1/notifications/").WithTags("Send Email Endpoints!");
+        var epicfyEndpoints = endpoints.MapGroup("api/v1/email-notifications/").WithTags("Send Email Endpoints!");
 
-        epicfyEndpoints.MapPost("new-idea", HandleSendEmailNotification);
+        epicfyEndpoints.MapPost("new-idea", HandleSendEmailIdea);
+        epicfyEndpoints.MapPost("confirm-user", HandleSendConfirmationEmail);
 
         return epicfyEndpoints;
     }
 
     #region [Handlers]
-    static IResult HandleSendEmailNotification(SendEmail sendEmailDto, ILogger<Program> logger, IOptions<SmtpSettings> smtpSettings)
+
+    private static IResult HandleSendConfirmationEmail()
+    {
+        return Results.Ok();  
+    }
+    
+    private static IResult HandleSendEmailIdea(NewIdeaRequest newIdeaRequest, ILogger<Program> logger, IOptions<SmtpSettings> smtpSettings)
     {
         try
         {
-            var emailNotification = new EmailNotification()
-                .WithTargetEmail(sendEmailDto.TargetEmail)
-                .WithUserName(sendEmailDto.CreatedBy)
-                .WithIdeaTitle(sendEmailDto.Idea.Title)
-                .WithIdeaDescription(sendEmailDto.Idea.Description)
-                .WithCreatedAt(sendEmailDto.Idea.CreatedAt);
+            var emailNotification = new NewIdeaEmailNotification()
+                .WithTargetEmail(newIdeaRequest.TargetEmail)
+                .WithUserName(newIdeaRequest.CreatedBy)
+                .WithIdeaTitle(newIdeaRequest.Idea.Title)
+                .WithIdeaDescription(newIdeaRequest.Idea.Description)
+                .WithCreatedAt(newIdeaRequest.Idea.CreatedAt);
 
             emailNotification.Send(smtpSettings.Value);
-            logger.LogInformation($"Notificação enviada com sucesso para: {sendEmailDto.TargetEmail}");
+            logger.LogInformation($"Notificação enviada com sucesso para: {newIdeaRequest.TargetEmail}");
 
             return Results.Ok();
         }

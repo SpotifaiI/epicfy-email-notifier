@@ -1,11 +1,10 @@
 using System.Net;
 using System.Net.Mail;
-
 using Epicty.EmailNotifier.Models;
 
-namespace Epicty.EmailNotifier;
+namespace Epicty.EmailNotifier.EmailNotification;
 
-public class EmailNotification()
+public class NewIdeaEmailNotification() : IEmailNotification<NewIdeaRequest>
 {
     private string? _targetEmail;
     private string? _ideaTitle;
@@ -13,31 +12,31 @@ public class EmailNotification()
     private DateTime _createdAt;
     private string? _createdBy;
 
-    public EmailNotification WithTargetEmail(string targetEmail)
+    public NewIdeaEmailNotification WithTargetEmail(string targetEmail)
     {
         _targetEmail = targetEmail;
         return this;
     }
 
-    public EmailNotification WithIdeaTitle(string title)
+    public NewIdeaEmailNotification WithIdeaTitle(string title)
     {
         _ideaTitle = title.Trim();
         return this;
     }
 
-    public EmailNotification WithIdeaDescription(string description)
+    public NewIdeaEmailNotification WithIdeaDescription(string description)
     {
         _ideaDescription = description.Trim();
         return this;
     }
 
-    public EmailNotification WithCreatedAt(DateTime createdAt)
+    public NewIdeaEmailNotification WithCreatedAt(DateTime createdAt)
     {
         _createdAt = createdAt;
         return this;
     }
 
-    public EmailNotification WithUserName(string userName)
+    public NewIdeaEmailNotification WithUserName(string userName)
     {
         _createdBy = userName;
         return this;
@@ -88,14 +87,14 @@ public class EmailNotification()
         }
     }
 
-    public static List<string> Validate(SendEmail sendEmailDto)
+    public List<string> Validate(NewIdeaRequest newIdeaRequest)
     {
         var validationErrors = new List<string>();
 
-        if (!MailAddress.TryCreate(sendEmailDto.TargetEmail, out _)) validationErrors.Add("Valid TargetEmail is required");
-        if (string.IsNullOrWhiteSpace(sendEmailDto.Idea.Title)) validationErrors.Add("Idea Title is required.");
-        if (string.IsNullOrWhiteSpace(sendEmailDto.Idea.Description)) validationErrors.Add("Idea Description is required.");
-        if (string.IsNullOrWhiteSpace(sendEmailDto.CreatedBy)) validationErrors.Add("CreatedBy is required.");
+        if (!MailAddress.TryCreate(newIdeaRequest.TargetEmail, out _)) validationErrors.Add("Valid TargetEmail is required");
+        if (string.IsNullOrWhiteSpace(newIdeaRequest.Idea.Title)) validationErrors.Add("Idea Title is required.");
+        if (string.IsNullOrWhiteSpace(newIdeaRequest.Idea.Description)) validationErrors.Add("Idea Description is required.");
+        if (string.IsNullOrWhiteSpace(newIdeaRequest.CreatedBy)) validationErrors.Add("CreatedBy is required.");
 
         return validationErrors;
     }

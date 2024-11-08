@@ -1,4 +1,4 @@
-namespace Epicty.EmailNotifier.Models;
+namespace Epicty.EmailNotifier.Models.Responses;
 
 public class ErrorResponse(int statusCode, List<string> errors)
 {
