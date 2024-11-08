@@ -1,7 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Epicty.EmailNotifier.Models;
 
-public abstract record NewIdeaRequest(string CreatedBy, Idea Idea, [EmailAddress] string TargetEmail);
+public record NewIdeaRequest(string CreatedBy, Idea Idea, [EmailAddress] string TargetEmail);
 
-public abstract record Idea(string Title, string Description, DateTime CreatedAt);
+public record Idea(string Title, string Description, DateTime CreatedAt);

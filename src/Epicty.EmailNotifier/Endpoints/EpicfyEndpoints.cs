@@ -1,10 +1,8 @@
-using System.Text;
-using System.Text.Json;
 using Epicty.EmailNotifier.EmailNotification;
+using Epicty.EmailNotifier.Filters;
 using Epicty.EmailNotifier.Models;
 using Epicty.EmailNotifier.Models.Requests;
 using Epicty.EmailNotifier.Models.Responses;
-
 using Microsoft.Extensions.Options;
 
 namespace Epicty.EmailNotifier.Endpoints;
@@ -17,6 +15,7 @@ internal static class EpicfyEndpoints
             .WithTags("Send Email Endpoints!");
 
         epicfyEndpoints.MapPost("new-idea", HandleSendEmailIdea)
+            .AddEndpointFilter<ValidationEndpointFilter<NewIdeaRequest>>()
             .Produces(500, typeof(ErrorResponse))
             .Produces(200)
             .WithOpenApi(x =>
@@ -26,6 +25,7 @@ internal static class EpicfyEndpoints
             });
         
         epicfyEndpoints.MapPost("confirm-email", HandleSendConfirmationEmail)
+            .AddEndpointFilter<ValidationEndpointFilter<EmailConfirmationRequest>>()
             .Produces(500, typeof(ErrorResponse))
             .Produces(200)
             .WithOpenApi(x =>
@@ -39,16 +39,6 @@ internal static class EpicfyEndpoints
 
     #region [Private Methods]
 
-    private static async Task<T> ReadBodyAs<T>(HttpContext context)
-    {
-        context.Request.EnableBuffering();
-        using StreamReader reader = new(context.Request.Body, Encoding.UTF8, leaveOpen: true);
-
-        string bodyString = await reader.ReadToEndAsync();
-        context.Request.Body.Position = 0;
-        return JsonSerializer.Deserialize<T>(bodyString)!;
-    }
-
     #endregion
     #region [Handlers]
 
@@ -57,12 +47,12 @@ internal static class EpicfyEndpoints
     {
         try
         {
-            EmailConfirmation emailConfirmation = new EmailConfirmation()
+            EmailConfirmationNotification emailConfirmationNotification = new EmailConfirmationNotification()
                 .WithTargetEmail(emailConfirmationRequest.TargetEmail)
                 .WithConfirmationUrl(emailConfirmationRequest.ConfirmationUrl)
                 .WithUserName(emailConfirmationRequest.UserName);
             
-            emailConfirmation.Send(smtpSettings.Value);
+            emailConfirmationNotification.Send(smtpSettings.Value);
             logger.LogInformation($"Notificação enviada com sucesso para: {emailConfirmationRequest.TargetEmail}");
             
             return Results.Ok();

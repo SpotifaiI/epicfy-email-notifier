@@ -6,7 +6,7 @@ using Epicty.EmailNotifier.Models.Requests;
 
 namespace Epicty.EmailNotifier.EmailNotification;
 
-public class EmailConfirmation : IEmailNotification<EmailConfirmationRequest>
+public class EmailConfirmationNotification : IEmailNotification<EmailConfirmationRequest>
 {
     private string? _confirmationUrl;
     private string? _targetEmail;
@@ -74,19 +74,19 @@ public class EmailConfirmation : IEmailNotification<EmailConfirmationRequest>
         return validationErrors;
     }
 
-    public EmailConfirmation WithTargetEmail(string targetEmail)
+    public EmailConfirmationNotification WithTargetEmail(string targetEmail)
     {
         _targetEmail = targetEmail;
         return this;
     }
 
-    public EmailConfirmation WithConfirmationUrl(string confirmationUrl)
+    public EmailConfirmationNotification WithConfirmationUrl(string confirmationUrl)
     {
         _confirmationUrl = confirmationUrl;
         return this;
     }
 
-    public EmailConfirmation WithUserName(string userName)
+    public EmailConfirmationNotification WithUserName(string userName)
     {
         _userName = userName;
         return this;

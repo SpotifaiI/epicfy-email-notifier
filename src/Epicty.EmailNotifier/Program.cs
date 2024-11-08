@@ -1,3 +1,4 @@
+using Epicty.EmailNotifier.EmailNotification;
 using Epicty.EmailNotifier.Endpoints;
 using Epicty.EmailNotifier.Models;
 
